@@ -1,0 +1,36 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    #    driver-class-name: org.postgresql.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url:
+#    username:
+#    password:
+    hikari:
+      minimum-idle: 3
+      maximum-pool-size: 10
+      connection-timeout: 30000
+
+  data:
+    redis:
+#      host:
+#      port:
+#      password:
+#      database:
+
+decorator:
+  datasource:
+    p6spy:
+      enable: false
+
+logging:
+  level:
+    root: INFO
+    com.dawnmoon.springboot_app_template: INFO
+
+knife4j:
+  enable: true
+
+

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 
+        每次程序启动创建一个新的日志文件
+        文件名格式：年月日时分秒.log（如：2025-10-22-14-43-23.log）
+    -->
+
+    <!-- 从application.yaml读取日志路径配置 -->
+    <springProperty scope="context" name="LOG_PATH" source="logging.file.path" defaultValue="logs"/>
+    
+    <!-- 日志格式定义 -->
+    <property name="LOG_PATTERN"
+              value="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] [%-5level] [%X{traceId}] %logger{36} - %msg%n"/>
+
+    <!-- 控制台输出配置 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 文件输出配置 - 所有日志 -->
+    <!-- 使用timestamp生成启动时的时间戳，作为文件名 -->
+    <timestamp key="startTime" datePattern="yyyy-MM-dd-HH-mm-ss"/>
+    
+    <appender name="FILE_ALL" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_PATH}/${startTime}.log</file>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <!-- 追加模式（默认true，这里显式声明） -->
+        <append>true</append>
+    </appender>
+
+    <!-- 文件输出配置 - 错误日志 -->
+    <appender name="FILE_ERROR" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_PATH}/${startTime}-error.log</file>
+        <!-- 只记录ERROR级别的日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <append>true</append>
+    </appender>
+
+    <!-- 根日志级别配置 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE_ALL"/>
+        <appender-ref ref="FILE_ERROR"/>
+    </root>
+
+    <!-- 项目日志级别配置 -->
+    <logger name="com.dawnmoon.springboot_app_template" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE_ALL"/>
+        <appender-ref ref="FILE_ERROR"/>
+    </logger>
+
+    <!-- Spring框架日志级别 -->
+    <logger name="org.springframework" level="INFO"/>
+    
+    <!-- MyBatis日志级别 -->
+    <logger name="com.dawnmoon.springboot_app_template.mapper" level="DEBUG"/>
+
+    <!-- SQL日志级别（P6Spy） -->
+    <logger name="p6spy" level="INFO"/>
+</configuration>
+
+

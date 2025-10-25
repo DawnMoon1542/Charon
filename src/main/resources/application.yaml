@@ -1,0 +1,71 @@
+# 配置读取优先级：
+# 命令行参数-环境变量-外部application-内部application-{profile}-内部application-secret
+
+spring:
+  application:
+    name: springboot-app-template
+
+  # 通过secret文件读取密钥，允许该文件不存在
+  config:
+    import: "optional:classpath:secret.yaml"
+
+  # 激活的配置文件 - 通过 Maven profiles 或 IDEA 配置切换
+  profiles:
+    active: @profileActive@
+
+# MyBatis-Plus 基础配置
+mybatis-plus:
+  # Mapper XML 文件位置
+  mapper-locations: classpath*:/mapper/**/*.xml
+  # 实体类包路径
+  type-aliases-package: com.dawnmoon.springboot_app_template.model.entity
+
+  configuration:
+    # 驼峰命名转换
+    map-underscore-to-camel-case: true
+    # 自动映射策略：FULL 完全映射
+    auto-mapping-behavior: full
+    # NULL 值处理 - 避免 Oracle 等数据库的 TypeException
+    jdbc-type-for-null: 'null'
+    # 日志实现
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+  global-config:
+    # 关闭 banner
+    banner: false
+    db-config:
+      # 主键类型：雪花算法
+      id-type: ASSIGN_ID
+      # 逻辑删除字段名（全局配置）
+      logic-delete-field: isDeleted
+      # 逻辑删除值（删除后的值）
+      logic-delete-value: 1
+      # 逻辑未删除值（正常值）
+      logic-not-delete-value: 0
+
+ 
+
+# 日志配置
+logging:
+  # 日志文件路径
+  file:
+    path: logs
+
+# 应用自定义配置
+app:
+  # 日志配置
+  log:
+    sql:
+      enabled: true
+      params: true
+      result: false
+
+  # 安全配置
+  security:
+    token:
+      # Token 过期时间（秒）- 24小时
+      ttl: 86400
+      # Token 存储前缀
+      prefix: "token:"
+
+

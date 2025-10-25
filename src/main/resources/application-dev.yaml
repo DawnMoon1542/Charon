@@ -1,0 +1,119 @@
+server:
+  port: 8081
+
+spring:
+  # 数据源配置 - MySQL
+  datasource:
+    #    driver-class-name: org.postgresql.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#    已经在secret中配置了，这里不要留空键
+#    url: jdbc:mysql://localhost:3306/springboot_template?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
+#    username: root
+#    password: 123456
+
+    # Hikari 连接池配置
+    hikari:
+      # 最小空闲连接数
+      minimum-idle: 5
+      # 最大连接数
+      maximum-pool-size: 20
+      # 连接超时时间（毫秒）
+      connection-timeout: 30000
+      # 最大生命周期（毫秒）
+      max-lifetime: 1800000
+      # 空闲超时时间（毫秒）
+      idle-timeout: 600000
+      # 连接测试查询
+      connection-test-query: SELECT 1
+
+  # Redis 配置
+  data:
+    redis:
+#      host: localhost
+#      port: 6379
+#      password:
+#      database: 0
+      timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 20
+          max-wait: -1ms
+          max-idle: 10
+          min-idle: 0
+
+# P6Spy SQL 监控配置
+decorator:
+  datasource:
+    p6spy:
+      enable: true
+      logging: slf4j
+      multiline: true
+
+ 
+
+# 日志级别配置 - 开发环境详细日志
+logging:
+  level:
+    root: INFO
+    com.dawnmoon.springboot_app_template: DEBUG
+    com.dawnmoon.springboot_app_template.mapper: DEBUG
+  pattern:
+    console: '[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] [%-5level] [%X{traceId}] %logger{36} - %msg%n'
+  file:
+    path: logs
+
+# Knife4j 配置
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+    enable-version: true
+    enable-reload-cache-parameter: true
+    enable-after-script: true
+    enable-filter-multipart-api-method-type: POST
+    enable-filter-multipart-apis: false
+    enable-request-cache: true
+    enable-host: false
+    enable-home-custom: true
+    home-custom-location: classpath:markdown/home.md
+
+# SpringDoc OpenAPI 配置
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  group-configs:
+    - group: 'User'
+      paths-to-match: '/api/user/**'
+      packages-to-scan: com.dawnmoon.springboot_app_template.controller
+    - group: 'Auth'
+      paths-to-match: '/api/auth/**'
+      packages-to-scan: com.dawnmoon.springboot_app_template.controller
+
+# 应用自定义配置
+app:
+  # 日志配置
+  log:
+    sql:
+      enabled: true
+      params: true
+      result: false
+
+  # 安全配置
+  security:
+    token:
+      # Token 过期时间（秒）- 24小时
+      ttl: 86400
+      # Token 存储前缀
+      prefix: "token:"
+
+  # 加密配置
+  crypto:
+    ecc:
+#      public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEiiJt7Ceq7WIGz/zt0bgtX5cKUW27OQUbEEwajP+OIUGzLYjY03V3JUXOHtLBzdV6FBJLnqWCxUxexzQSOnZevQ==
+#      private-key: MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg+kTY6aigTzGHKkTlSYGV898+orMPVVukK7VCYa1/xsugCgYIKoZIzj0DAQehRANCAASKIm3sJ6rtYgbP/O3RuC1flwpRbbs5BRsQTBqM/44hQbMtiNjTdXclRc4e0sHN1XoUEkuepYLFTF7HNBI6dl69
+

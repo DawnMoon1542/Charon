@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.5.6</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.dawnmoon</groupId>
+	<artifactId>springboot_app_template</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>springboot_app_template</name>
+	<description>springboot_app_template</description>
+	<url/>
+	<licenses>
+		<license/>
+	</licenses>
+	<developers>
+		<developer/>
+	</developers>
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
+	<properties>
+		<!-- 第三方库版本统一管理 -->
+		<mybatis-plus-jsqlparser.version>3.5.12</mybatis-plus-jsqlparser.version>
+		<mybatis-plus.version>3.5.12</mybatis-plus.version>
+		<knife4j.version>4.4.0</knife4j.version>
+		<bc.version>1.78.1</bc.version>
+		<p6spy.starter.version>1.9.1</p6spy.starter.version>
+		<lombok.version>1.18.34</lombok.version>
+		<springdoc-openapi.version>2.8.9</springdoc-openapi.version>
+	</properties>
+
+
+
+	<dependencies>
+		<!-- Web、校验、AOP、Security、Redis（版本由 Spring Boot 3.5.6 BOM 管理） -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+
+		<!-- MyBatis-Plus -->
+		<dependency>
+			<groupId>com.baomidou</groupId>
+			<artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+			<version>${mybatis-plus.version}</version>
+		</dependency>
+
+		<!-- 添加了这个才会有PaginationInnerInterceptor，奇怪 -->
+		<dependency>
+			<groupId>com.baomidou</groupId>
+			<artifactId>mybatis-plus-jsqlparser</artifactId>
+			<version>${mybatis-plus-jsqlparser.version}</version>
+		</dependency>
+
+		<!-- 数据库驱动（由 BOM 管理版本） -->
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- SQL 日志增强（可在 application 中一键开/关 SQL/参数/耗时） -->
+		<dependency>
+			<groupId>com.github.gavlyukovskiy</groupId>
+			<artifactId>p6spy-spring-boot-starter</artifactId>
+			<version>${p6spy.starter.version}</version>
+		</dependency>
+
+		<!-- 加密：BCrypt 已在 Security 中；ECC 用 BouncyCastle -->
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk18on</artifactId>
+			<version>${bc.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcpkix-jdk18on</artifactId>
+			<version>${bc.version}</version>
+		</dependency>
+
+		<!-- Knife4j 文档 -->
+		<dependency>
+			<groupId>com.github.xiaoymin</groupId>
+			<artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+			<version>${knife4j.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${springdoc-openapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-common</artifactId>
+			<version>${springdoc-openapi.version}</version>
+		</dependency>
+
+		<!-- Lombok（IDE/编译期使用） -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- 测试 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<!-- 启用资源过滤 -->
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<!-- 开发环境 (默认激活) -->
+		<profile>
+			<id>dev</id>
+			<activation>
+				<!-- 设置为默认 profile -->
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<!-- dev profile 被激活时，profileActive 的值为 dev -->
+				<profileActive>dev</profileActive>
+			</properties>
+		</profile>
+
+		<!-- 测试环境 -->
+		<profile>
+			<id>test</id>
+			<properties>
+				<!-- test profile 被激活时，profileActive 的值为 test -->
+				<profileActive>test</profileActive>
+			</properties>
+		</profile>
+
+		<!-- 生产环境 -->
+		<profile>
+			<id>prod</id>
+			<properties>
+				<!-- prod profile 被激活时，profileActive 的值为 prod -->
+				<profileActive>prod</profileActive>
+			</properties>
+		</profile>
+	</profiles>
+
+</project>
