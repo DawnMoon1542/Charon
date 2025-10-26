@@ -75,7 +75,7 @@ knife4j:
     enable-request-cache: true
     enable-host: false
     enable-home-custom: true
-    home-custom-location: classpath:markdown/home.md
+    home-custom-path: "classpath:markdown/home.md"
 
 # SpringDoc OpenAPI 配置
 springdoc:
@@ -96,13 +96,6 @@ springdoc:
 
 # 应用自定义配置
 app:
-  # 日志配置
-  log:
-    sql:
-      enabled: true
-      params: true
-      result: false
-
   # 安全配置
   security:
     token:
@@ -112,8 +105,8 @@ app:
       prefix: "token:"
 
   # 加密配置
-  crypto:
-    ecc:
+#  crypto:
+#    ecc:
 #      public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEiiJt7Ceq7WIGz/zt0bgtX5cKUW27OQUbEEwajP+OIUGzLYjY03V3JUXOHtLBzdV6FBJLnqWCxUxexzQSOnZevQ==
 #      private-key: MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg+kTY6aigTzGHKkTlSYGV898+orMPVVukK7VCYa1/xsugCgYIKoZIzj0DAQehRANCAASKIm3sJ6rtYgbP/O3RuC1flwpRbbs5BRsQTBqM/44hQbMtiNjTdXclRc4e0sHN1XoUEkuepYLFTF7HNBI6dl69
 

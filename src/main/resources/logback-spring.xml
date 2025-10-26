@@ -58,7 +58,7 @@
     </root>
 
     <!-- 项目日志级别配置 -->
-    <logger name="com.dawnmoon.springboot_app_template" level="DEBUG" additivity="false">
+    <logger name="com.dawnmoon.charon" level="DEBUG" additivity="false">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE_ALL"/>
         <appender-ref ref="FILE_ERROR"/>
@@ -68,7 +68,7 @@
     <logger name="org.springframework" level="INFO"/>
     
     <!-- MyBatis日志级别 -->
-    <logger name="com.dawnmoon.springboot_app_template.mapper" level="DEBUG"/>
+    <logger name="com.dawnmoon.charon.mapper" level="DEBUG"/>
 
     <!-- SQL日志级别（P6Spy） -->
     <logger name="p6spy" level="INFO"/>

@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.dawnmoon</groupId>
-	<artifactId>springboot_app_template</artifactId>
+	<artifactId>charon</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>springboot_app_template</name>
-	<description>springboot_app_template</description>
+	<name>charon</name>
+	<description>A standardized SpringBoot development template.</description>
 	<url/>
 	<licenses>
 		<license/>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.dawnmoon.springboot_app_template.mapper.UserMapper">
+<mapper namespace="com.dawnmoon.charon.mapper.UserMapper">
 
     <!--
         XML映射文件策略：
@@ -11,7 +11,7 @@
     -->
 
     <!-- 根据关键词分页查询用户列表 - 复杂查询 + MyBatis-Plus 分页（通过 Page 参数自动拦截） -->
-    <select id="selectUsersByKeyword" resultType="com.dawnmoon.springboot_app_template.model.entity.User">
+    <select id="selectUsersByKeyword" resultType="com.dawnmoon.charon.model.entity.User">
         SELECT * FROM sys_user
         WHERE is_deleted = 0
         <if test="keyword != null and keyword != ''">
