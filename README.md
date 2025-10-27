@@ -111,39 +111,6 @@ src/main/java/com/dawnmoon/springboot_app_template/
     └── PageUtil.java          # 分页工具
 ```
 
-### 认证流程
-
-```mermaid
-sequenceDiagram
-    participant Client as 客户端
-    participant Controller as Controller
-    participant Service as AuthService
-    participant Redis as Redis
-    participant DB as 数据库
-
-    Client->>Controller: POST /api/auth/login
-    Controller->>Service: 验证用户名密码
-    Service->>DB: 查询用户信息
-    DB-->>Service: 返回用户数据
-    Service->>Service: BCrypt 验证密码
-    Service->>Redis: 踢出旧设备（删除旧Token）
-    Service->>Redis: 存储新Token和用户信息
-    Service-->>Controller: 返回Token
-    Controller-->>Client: 登录成功，返回Token
-    
-    Note over Client,Redis: 后续请求携带 Token
-    
-    Client->>Controller: GET /api/user/profile (Header: Bearer Token)
-    Controller->>JwtFilter: JWT过滤器拦截
-    JwtFilter->>Redis: 验证Token并获取用户信息
-    Redis-->>JwtFilter: 返回UserPrincipal
-    JwtFilter->>JwtFilter: 设置SecurityContext
-    JwtFilter->>Redis: 刷新Token过期时间（滑动过期）
-    Controller->>Service: 调用业务方法
-    Service-->>Controller: 返回数据
-    Controller-->>Client: 返回响应
-```
-
 ---
 
 ## 🚀 快速开始
@@ -184,29 +151,6 @@ cd charon
 
 - **API 文档**: http://localhost:8081/doc.html
 - **Swagger UI**: http://localhost:8081/swagger-ui.html
-- **健康检查**: http://localhost:8081/actuator/health (如果启用)
-
-**测试登录接口：**
-
-```bash
-curl -X POST http://localhost:8081/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "admin",
-    "password": "admin123"
-  }'
-```
-
-**响应示例：**
-
-```json
-{
-  "code": "SUCCESS",
-  "message": "操作成功",
-  "data": "your-jwt-token-here",
-  "timestamp": 1719876543210
-}
-```
 
 ---
 
