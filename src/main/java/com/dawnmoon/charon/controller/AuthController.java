@@ -6,14 +6,13 @@ import com.dawnmoon.charon.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 
 /**
  * 认证授权 Controller
@@ -64,17 +63,6 @@ public class AuthController {
     public ApiResponse<String> forceLogout(@PathVariable Long userId) {
         authService.forceLogoutByAdmin(userId);
         return ApiResponse.success("已强制用户退出登录");
-    }
-
-    @Operation(
-        summary = "查询在线用户数",
-        description = "获取当前在线用户总数",
-        security = @SecurityRequirement(name = "Authorization")
-    )
-    @GetMapping("/online-count")
-    public ApiResponse<Long> getOnlineUserCount() {
-        Long count = authService.getOnlineUserCount();
-        return ApiResponse.success(count);
     }
 
     @Operation(

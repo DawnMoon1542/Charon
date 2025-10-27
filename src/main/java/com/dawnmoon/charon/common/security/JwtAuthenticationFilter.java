@@ -67,8 +67,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     if (ttl != null && ttl > 0 && ttl < 3600) { // 如果剩余时间少于1小时，刷新过期时间
                         redisTemplate.expire(redisKey, 24, TimeUnit.HOURS);
                     }
-
-                    log.debug("用户 [{}] 认证成功", userPrincipal.getUsername());
+                    log.debug("用户 [username={}, id={}] 发起请求", userPrincipal.getUsername(), userPrincipal.getUserId());
                 }
             } catch (Exception e) {
                 log.error("认证失败: {}", e.getMessage());

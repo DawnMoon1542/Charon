@@ -32,11 +32,6 @@ public interface AuthService {
      */
     void forceLogoutByAdmin(Long targetUserId);
 
-    /**
-     * 查询当前在线用户数
-     * @return 在线用户数量
-     */
-    Long getOnlineUserCount();
 
     /**
      * 获取用户的登录时间

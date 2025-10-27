@@ -7,15 +7,14 @@ import com.dawnmoon.charon.model.entity.User;
 import com.dawnmoon.charon.model.request.AuthRequests;
 import com.dawnmoon.charon.service.AuthService;
 import com.dawnmoon.charon.service.UserService;
+import com.dawnmoon.charon.util.CryptoUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import com.dawnmoon.charon.util.CryptoUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -74,9 +73,7 @@ public class AuthServiceImpl implements AuthService {
         UserPrincipal userPrincipal = new UserPrincipal(
             userId,
             user.getUsername(),
-            null, // 密码不存储在 Redis 中
             user.getRoles(),
-            user.getEnabled(),
             System.currentTimeMillis() // 记录登录时间
         );
 
@@ -109,13 +106,16 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // 2. 创建新用户
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(CryptoUtil.bcryptEncode(request.getPassword()));
-        user.setRealName(request.getRealName());
-        user.setPhone(request.getPhone());
-        user.setEmail(request.getEmail());
-        user.setStatus(0); // 默认启用
+        User user = new User(
+                request.getUsername(),
+                request.getPassword(),
+                request.getRealName(),
+                request.getPhone(),
+                request.getEmail(),
+                null,
+                0,
+                null
+        );
 
         // 3. 保存用户
         userService.create(user);
@@ -173,14 +173,6 @@ public class AuthServiceImpl implements AuthService {
         redisTemplate.delete(USER_ID_TO_TOKEN_KEY_PREFIX + targetUserId);
 
         log.info("管理员强制用户 [{}] 退出登录成功", targetUserId);
-    }
-
-    @Override
-    public Long getOnlineUserCount() {
-        // 使用 KEYS 命令查询所有 user_id_to_token:* 格式的 Key
-        // 注意：生产环境建议使用 SCAN 而不是 KEYS
-        Set<String> keys = redisTemplate.keys(USER_ID_TO_TOKEN_KEY_PREFIX + "*");
-        return keys != null ? (long) keys.size() : 0L;
     }
 
     @Override

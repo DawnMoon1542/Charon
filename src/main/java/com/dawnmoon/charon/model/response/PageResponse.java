@@ -1,8 +1,11 @@
 package com.dawnmoon.charon.model.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -11,8 +14,11 @@ import java.util.List;
  */
 @Data
 @Schema(description = "分页响应")
+@AllArgsConstructor
+@NoArgsConstructor
 public class PageResponse<T> implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "总记录数")

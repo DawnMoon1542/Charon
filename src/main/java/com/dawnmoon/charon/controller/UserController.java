@@ -3,13 +3,13 @@ package com.dawnmoon.charon.controller;
 import com.dawnmoon.charon.common.api.ApiResponse;
 import com.dawnmoon.charon.common.enums.ErrorCode;
 import com.dawnmoon.charon.common.exception.BusinessException;
-import com.dawnmoon.charon.util.SecurityUtil;
 import com.dawnmoon.charon.model.entity.User;
 import com.dawnmoon.charon.model.request.UserRequests;
 import com.dawnmoon.charon.model.response.PageResponse;
 import com.dawnmoon.charon.model.response.UserResponse;
 import com.dawnmoon.charon.service.UserService;
 import com.dawnmoon.charon.util.CryptoUtil;
+import com.dawnmoon.charon.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -44,6 +44,7 @@ public class UserController {
     )
     @GetMapping("/list")
     public ApiResponse<PageResponse<UserResponse>> list(@Valid UserRequests.QueryRequest request) {
+        System.out.println(request);
         PageResponse<User> pageResponse = userService.list(
             request.getPageNum(), 
             request.getPageSize(), 
@@ -51,14 +52,14 @@ public class UserController {
         );
         
         // 转换为 UserResponse
-        PageResponse<UserResponse> result = new PageResponse<>();
-        result.setTotal(pageResponse.getTotal());
-        result.setPageNum(pageResponse.getPageNum());
-        result.setPageSize(pageResponse.getPageSize());
-        result.setPages(pageResponse.getPages());
-        result.setList(pageResponse.getList().stream()
-            .map(this::convertToResponse)
-            .collect(Collectors.toList())
+        PageResponse<UserResponse> result = new PageResponse<>(
+                pageResponse.getTotal(),
+                pageResponse.getPageNum(),
+                pageResponse.getPageSize(),
+                pageResponse.getPages(),
+                pageResponse.getList().stream()
+                        .map(this::convertToResponse)
+                        .collect(Collectors.toList())
         );
         
         return ApiResponse.success(result);
