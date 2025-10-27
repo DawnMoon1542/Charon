@@ -43,13 +43,14 @@ public class UserController {
         security = @SecurityRequirement(name = "Authorization")
     )
     @GetMapping("/list")
-    public ApiResponse<PageResponse<UserResponse>> list(@Valid UserRequests.QueryRequest request) {
-        System.out.println(request);
-        PageResponse<User> pageResponse = userService.list(
-            request.getPageNum(), 
-            request.getPageSize(), 
-            request.getKeyword()
-        );
+    public ApiResponse<PageResponse<UserResponse>> list(
+            @Parameter(description = "页码", example = "1") @RequestParam(defaultValue = "1") Integer pageNum,
+            @Parameter(description = "每页大小", example = "10") @RequestParam(defaultValue = "10") Integer pageSize,
+            @Parameter(description = "关键词（用户名、真实姓名、手机号、邮箱）", example = "张三") @RequestParam(required = false) String keyword,
+            @Parameter(description = "账号状态：0-启用，1-禁用", example = "0") @RequestParam(required = false) Integer status
+    ) {
+        log.info("分页查询用户列表 - pageNum: {}, pageSize: {}, keyword: {}, status: {}", pageNum, pageSize, keyword, status);
+        PageResponse<User> pageResponse = userService.list(pageNum, pageSize, keyword);
         
         // 转换为 UserResponse
         PageResponse<UserResponse> result = new PageResponse<>(
