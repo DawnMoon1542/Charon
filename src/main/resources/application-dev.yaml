@@ -89,10 +89,10 @@ springdoc:
   group-configs:
     - group: 'User'
       paths-to-match: '/api/user/**'
-      packages-to-scan: com.dawnmoon.springboot_app_template.controller
+      packages-to-scan: com.dawnmoon.charon.controller
     - group: 'Auth'
       paths-to-match: '/api/auth/**'
-      packages-to-scan: com.dawnmoon.springboot_app_template.controller
+      packages-to-scan: com.dawnmoon.charon.controller
 
 # 应用自定义配置
 app:

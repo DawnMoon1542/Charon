@@ -3,7 +3,7 @@ package com.dawnmoon.charon.config;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.dawnmoon.charon.common.security.SecurityUtil;
+import com.dawnmoon.charon.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 import org.mybatis.spring.annotation.MapperScan;

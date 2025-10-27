@@ -44,7 +44,7 @@ public class AuthController {
     @Operation(
         summary = "用户自己退出登录",
         description = "用户主动退出登录，删除当前 Token 对应的会话",
-        security = @SecurityRequirement(name = "Bearer Authentication")
+        security = @SecurityRequirement(name = "Authorization")
     )
     @PostMapping("/logout")
     public ApiResponse<String> logout(HttpServletRequest request) {
@@ -57,7 +57,7 @@ public class AuthController {
     @Operation(
         summary = "管理员强制用户退出",
         description = "管理员强制指定用户下线（需要管理员权限）",
-        security = @SecurityRequirement(name = "Bearer Authentication")
+        security = @SecurityRequirement(name = "Authorization")
     )
     @PreAuthorize("hasRole('ADMIN')") // 限制只有管理员可以调用
     @PostMapping("/admin/force-logout/{userId}")
@@ -69,7 +69,7 @@ public class AuthController {
     @Operation(
         summary = "查询在线用户数",
         description = "获取当前在线用户总数",
-        security = @SecurityRequirement(name = "Bearer Authentication")
+        security = @SecurityRequirement(name = "Authorization")
     )
     @GetMapping("/online-count")
     public ApiResponse<Long> getOnlineUserCount() {
@@ -80,7 +80,7 @@ public class AuthController {
     @Operation(
         summary = "查询用户登录时间",
         description = "获取指定用户的登录时间",
-        security = @SecurityRequirement(name = "Bearer Authentication")
+        security = @SecurityRequirement(name = "Authorization")
     )
     @GetMapping("/login-time/{userId}")
     public ApiResponse<Long> getLoginTime(@PathVariable Long userId) {

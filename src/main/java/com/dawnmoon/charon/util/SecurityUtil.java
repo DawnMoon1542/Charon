@@ -1,5 +1,6 @@
-package com.dawnmoon.charon.common.security;
+package com.dawnmoon.charon.util;
 
+import com.dawnmoon.charon.common.security.UserPrincipal;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 

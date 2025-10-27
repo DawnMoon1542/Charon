@@ -3,7 +3,7 @@ package com.dawnmoon.charon.controller;
 import com.dawnmoon.charon.common.api.ApiResponse;
 import com.dawnmoon.charon.common.enums.ErrorCode;
 import com.dawnmoon.charon.common.exception.BusinessException;
-import com.dawnmoon.charon.common.security.SecurityUtil;
+import com.dawnmoon.charon.util.SecurityUtil;
 import com.dawnmoon.charon.model.entity.User;
 import com.dawnmoon.charon.model.request.UserRequests;
 import com.dawnmoon.charon.model.response.PageResponse;
@@ -40,7 +40,7 @@ public class UserController {
     @Operation(
         summary = "分页查询用户列表",
         description = "支持按关键词（用户名、真实姓名、手机号、邮箱）和状态查询",
-        security = @SecurityRequirement(name = "Bearer Authentication")
+        security = @SecurityRequirement(name = "Authorization")
     )
     @GetMapping("/list")
     public ApiResponse<PageResponse<UserResponse>> list(@Valid UserRequests.QueryRequest request) {
@@ -67,7 +67,7 @@ public class UserController {
     @Operation(
         summary = "根据 ID 获取用户详情",
         description = "获取用户的详细信息，包括角色列表",
-        security = @SecurityRequirement(name = "Bearer Authentication")
+        security = @SecurityRequirement(name = "Authorization")
     )
     @GetMapping("/{id}")
     public ApiResponse<UserResponse> getById(
@@ -83,7 +83,7 @@ public class UserController {
     @Operation(
         summary = "创建用户",
         description = "创建新用户，仅管理员可操作",
-        security = @SecurityRequirement(name = "Bearer Authentication")
+        security = @SecurityRequirement(name = "Authorization")
     )
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
@@ -110,7 +110,7 @@ public class UserController {
     @Operation(
         summary = "更新用户信息（普通用户）",
         description = "用户只能更新自己的基本信息（真实姓名、手机号、邮箱、头像），不能修改状态",
-        security = @SecurityRequirement(name = "Bearer Authentication")
+        security = @SecurityRequirement(name = "Authorization")
     )
     @PutMapping("/update")
     public ApiResponse<String> update(@RequestBody @Valid UserRequests.UpdateRequest request) {
@@ -154,7 +154,7 @@ public class UserController {
     @Operation(
         summary = "管理员更新用户信息",
         description = "管理员可以更新用户的所有信息，包括状态",
-        security = @SecurityRequirement(name = "Bearer Authentication")
+        security = @SecurityRequirement(name = "Authorization")
     )
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/admin/update")
@@ -191,7 +191,7 @@ public class UserController {
     @Operation(
         summary = "删除用户",
         description = "删除指定用户（逻辑删除），仅管理员可操作",
-        security = @SecurityRequirement(name = "Bearer Authentication")
+        security = @SecurityRequirement(name = "Authorization")
     )
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
@@ -219,7 +219,7 @@ public class UserController {
     @Operation(
         summary = "修改密码",
         description = "用户修改自己的密码",
-        security = @SecurityRequirement(name = "Bearer Authentication")
+        security = @SecurityRequirement(name = "Authorization")
     )
     @PostMapping("/change-password")
     public ApiResponse<String> changePassword(@RequestBody @Valid UserRequests.ChangePasswordRequest request) {
