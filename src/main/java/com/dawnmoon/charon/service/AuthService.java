@@ -39,6 +39,14 @@ public interface AuthService {
      * @return 登录时间戳（毫秒）
      */
     Long getLoginTime(Long userId);
+
+    /**
+     * 从Token中获取用户ID
+     *
+     * @param token JWT Token
+     * @return 用户ID
+     */
+    Long getUserIdFromToken(String token);
 }
 
 

@@ -15,7 +15,8 @@ import java.util.stream.Collectors;
 
 /**
  * 用户认证主体
- * 简化版本，不实现UserDetails接口，只保留必要的认证信息
+ *
+ * <p>该对象会被缓存到Redis中，包含用户的角色和权限信息</p>
  */
 @Data
 @NoArgsConstructor
@@ -28,6 +29,7 @@ public class UserPrincipal implements Serializable {
     private Long userId;
     private String username;
     private List<String> roles;
+    private List<String> permissions;  // 用户权限列表（权限编码，如：USER:CREATE）
     private Long loginTime;
 
     /**

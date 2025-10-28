@@ -3,6 +3,8 @@ package com.dawnmoon.charon.service.serviceImpl;
 import com.dawnmoon.charon.common.enums.ErrorCode;
 import com.dawnmoon.charon.common.exception.BusinessException;
 import com.dawnmoon.charon.common.security.UserPrincipal;
+import com.dawnmoon.charon.mapper.PermissionMapper;
+import com.dawnmoon.charon.model.entity.Permission;
 import com.dawnmoon.charon.model.entity.User;
 import com.dawnmoon.charon.model.request.AuthRequests;
 import com.dawnmoon.charon.service.AuthService;
@@ -15,8 +17,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * 认证服务实现类
@@ -28,6 +32,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final UserService userService;
+    private final PermissionMapper permissionMapper;
 
     @Value("${app.security.token.prefix:token:}")
     private String tokenKeyPrefix;
@@ -39,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String login(AuthRequests.LoginRequest request) {
-        // 1. 验证用户名和密码
+        // 1. 验证用户名
         User user = userService.getByUsername(request.getUsername());
         if (user == null) {
             throw new BusinessException(ErrorCode.USERNAME_OR_PASSWORD_ERROR);
@@ -55,7 +60,7 @@ public class AuthServiceImpl implements AuthService {
             throw new BusinessException(ErrorCode.USER_ACCOUNT_DISABLED);
         }
 
-        // 4. 查找并踢出旧设备（单点登录/互踢机制）
+        // 4. 查找并踢出旧设备
         Long userId = user.getId();
         String oldToken = (String) redisTemplate.opsForValue()
             .get(USER_ID_TO_TOKEN_KEY_PREFIX + userId);
@@ -63,21 +68,28 @@ public class AuthServiceImpl implements AuthService {
         if (StringUtils.hasText(oldToken)) {
             // 删除旧 Token，踢出先登录的设备
             redisTemplate.delete(tokenKeyPrefix + oldToken);
-            log.info("用户 [{}] 在其他设备登录，旧设备已被踢出", userId);
+            log.info("用户 [{}] 在新设备登录，旧设备已被踢出", userId);
         }
 
         // 5. 生成新 Token
         String newToken = UUID.randomUUID().toString().replace("-", "");
 
-        // 6. 创建 UserPrincipal 对象（包含登录时间）
+        // 6. 查询用户权限（从数据库）
+        List<Permission> permissionList = permissionMapper.selectPermissionsByUserId(userId);
+        List<String> permissions = permissionList.stream()
+                .map(Permission::getPermissionCode)
+                .collect(Collectors.toList());
+
+        // 7. 创建 UserPrincipal 对象
         UserPrincipal userPrincipal = new UserPrincipal(
             userId,
             user.getUsername(),
             user.getRoles(),
-            System.currentTimeMillis() // 记录登录时间
+                permissions,
+                System.currentTimeMillis()
         );
 
-        // 7. 存储 Token → UserPrincipal 映射（设置过期时间）
+        // 8. 存储 Token → UserPrincipal 映射（设置过期时间）
         redisTemplate.opsForValue().set(
             tokenKeyPrefix + newToken,
             userPrincipal,
@@ -85,7 +97,7 @@ public class AuthServiceImpl implements AuthService {
             TimeUnit.SECONDS
         );
 
-        // 8. 存储 UserId → Token 映射（设置相同的过期时间）
+        // 9. 存储 UserId → Token 映射（设置相同的过期时间）
         redisTemplate.opsForValue().set(
             USER_ID_TO_TOKEN_KEY_PREFIX + userId,
             newToken,
@@ -93,7 +105,7 @@ public class AuthServiceImpl implements AuthService {
             TimeUnit.SECONDS
         );
 
-        log.info("用户 [{}] 登录成功，Token: {}...", userId, newToken.substring(0, 7));
+        log.info("用户 [{}] 登录成功，拥有 {} 个权限，Token: {}...", userId, permissions.size(), newToken.substring(0, 7));
         return newToken;
     }
 
@@ -188,6 +200,18 @@ public class AuthServiceImpl implements AuthService {
             .get(tokenKeyPrefix + token);
 
         return userPrincipal != null ? userPrincipal.getLoginTime() : null;
+    }
+
+    @Override
+    public Long getUserIdFromToken(String token) {
+        if (!StringUtils.hasText(token)) {
+            return null;
+        }
+
+        String tokenKey = tokenKeyPrefix + token;
+        UserPrincipal userPrincipal = (UserPrincipal) redisTemplate.opsForValue().get(tokenKey);
+
+        return userPrincipal != null ? userPrincipal.getUserId() : null;
     }
 }
 

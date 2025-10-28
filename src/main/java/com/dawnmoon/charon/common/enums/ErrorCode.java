@@ -37,7 +37,27 @@ public enum ErrorCode implements BaseEnum<String> {
     // 数据库相关错误
     DATABASE_ERROR("DATABASE_ERROR", "数据库操作失败"),
     DATA_ALREADY_EXISTS("DATA_ALREADY_EXISTS", "数据已存在"),
-    DATA_NOT_FOUND("DATA_NOT_FOUND", "数据不存在");
+    DATA_NOT_FOUND("DATA_NOT_FOUND", "数据不存在"),
+
+    // 角色相关错误
+    ROLE_NOT_FOUND("ROLE_NOT_FOUND", "角色不存在"),
+    ROLE_ALREADY_EXISTS("ROLE_ALREADY_EXISTS", "角色已存在"),
+    ROLE_CODE_ALREADY_EXISTS("ROLE_CODE_ALREADY_EXISTS", "角色编码已存在"),
+    ROLE_IN_USE("ROLE_IN_USE", "角色正在使用中，无法删除"),
+
+    // 权限相关错误
+    PERMISSION_NOT_FOUND("PERMISSION_NOT_FOUND", "权限不存在"),
+    PERMISSION_ALREADY_EXISTS("PERMISSION_ALREADY_EXISTS", "权限已存在"),
+    PERMISSION_CODE_ALREADY_EXISTS("PERMISSION_CODE_ALREADY_EXISTS", "权限编码已存在"),
+    PERMISSION_IN_USE("PERMISSION_IN_USE", "权限正在使用中，无法删除"),
+
+    // 用户角色关联错误
+    USER_ROLE_ALREADY_EXISTS("USER_ROLE_ALREADY_EXISTS", "用户已拥有该角色"),
+    USER_ROLE_NOT_FOUND("USER_ROLE_NOT_FOUND", "用户角色关联不存在"),
+
+    // 角色权限关联错误
+    ROLE_PERMISSION_ALREADY_EXISTS("ROLE_PERMISSION_ALREADY_EXISTS", "角色已拥有该权限"),
+    ROLE_PERMISSION_NOT_FOUND("ROLE_PERMISSION_NOT_FOUND", "角色权限关联不存在");
 
     private final String code;
     private final String description;

@@ -3,10 +3,14 @@ package com.dawnmoon.charon.controller;
 import com.dawnmoon.charon.common.api.ApiResponse;
 import com.dawnmoon.charon.common.enums.ErrorCode;
 import com.dawnmoon.charon.common.exception.BusinessException;
+import com.dawnmoon.charon.common.security.RequirePermission;
+import com.dawnmoon.charon.model.entity.Role;
 import com.dawnmoon.charon.model.entity.User;
 import com.dawnmoon.charon.model.request.UserRequests;
 import com.dawnmoon.charon.model.response.PageResponse;
+import com.dawnmoon.charon.model.response.RoleResponse;
 import com.dawnmoon.charon.model.response.UserResponse;
+import com.dawnmoon.charon.service.RoleService;
 import com.dawnmoon.charon.service.UserService;
 import com.dawnmoon.charon.util.CryptoUtil;
 import com.dawnmoon.charon.util.SecurityUtil;
@@ -18,10 +22,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +40,8 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final UserService userService;
+    private final RoleService roleService;
+    private final com.dawnmoon.charon.service.UserRoleService userRoleService;
 
     @Operation(
         summary = "分页查询用户列表",
@@ -71,11 +77,11 @@ public class UserController {
         description = "获取用户的详细信息，包括角色列表",
         security = @SecurityRequirement(name = "Authorization")
     )
-    @GetMapping("/{id}")
-    public ApiResponse<UserResponse> getById(
-        @Parameter(description = "用户ID", required = true) @PathVariable Long id
+    @GetMapping("/{userId}")
+    public ApiResponse<UserResponse> getByUserId(
+            @Parameter(description = "用户ID", required = true) @PathVariable Long userId
     ) {
-        User user = userService.getById(id);
+        User user = userService.getById(userId);
         if (user == null) {
             throw new BusinessException(ErrorCode.USER_NOT_FOUND);
         }
@@ -84,12 +90,12 @@ public class UserController {
 
     @Operation(
         summary = "创建用户",
-        description = "创建新用户，仅管理员可操作",
+            description = "创建新用户，需要USER:CREATE权限",
         security = @SecurityRequirement(name = "Authorization")
     )
-    @PreAuthorize("hasRole('ADMIN')")
+    @RequirePermission("USER:CREATE")
     @PostMapping
-    public ApiResponse<String> create(@RequestBody @Valid UserRequests.CreateRequest request) {
+    public ApiResponse<Long> create(@RequestBody @Valid UserRequests.CreateRequest request) {
         // 检查用户名是否已存在
         User existingUser = userService.getByUsername(request.getUsername());
         if (existingUser != null) {
@@ -104,9 +110,9 @@ public class UserController {
         user.setPassword(CryptoUtil.bcryptEncode(request.getPassword()));
         
         userService.create(user);
-        
-        log.info("管理员创建用户成功：{}", request.getUsername());
-        return ApiResponse.success("创建用户成功");
+
+        log.info("管理员创建用户成功：{}, ID: {}", request.getUsername(), user.getId());
+        return ApiResponse.success("创建用户成功", user.getId());
     }
 
     @Operation(
@@ -154,20 +160,23 @@ public class UserController {
     }
 
     @Operation(
-        summary = "管理员更新用户信息",
-        description = "管理员可以更新用户的所有信息，包括状态",
+            summary = "管理员更新指定用户信息",
+            description = "管理员更新用户信息，支持部分更新",
         security = @SecurityRequirement(name = "Authorization")
     )
-    @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/admin/update")
-    public ApiResponse<String> adminUpdate(@RequestBody @Valid UserRequests.AdminUpdateRequest request) {
+    @RequirePermission("USER:UPDATE")
+    @PutMapping("/{userId}")
+    public ApiResponse<String> updateByUserId(
+            @Parameter(description = "用户ID", required = true) @PathVariable Long userId,
+            @RequestBody @Valid UserRequests.AdminUpdateRequest request
+    ) {
         // 检查用户是否存在
-        User user = userService.getById(request.getId());
+        User user = userService.getById(userId);
         if (user == null) {
             throw new BusinessException(ErrorCode.USER_NOT_FOUND);
         }
-        
-        // 更新所有字段
+
+        // 只更新非null字段
         if (request.getRealName() != null) {
             user.setRealName(request.getRealName());
         }
@@ -185,9 +194,80 @@ public class UserController {
         }
         
         userService.update(user);
-        
-        log.info("管理员更新用户信息成功：userId={}", request.getId());
+
+        log.info("管理员更新用户信息成功：userId={}", userId);
         return ApiResponse.success("更新用户信息成功");
+    }
+
+    @Operation(
+            summary = "获取用户的所有角色",
+            description = "查询指定用户拥有的所有角色",
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @RequirePermission("USER:VIEW")
+    @GetMapping("/{userId}/roles")
+    public ApiResponse<List<RoleResponse>> getUserRoles(
+            @Parameter(description = "用户ID", required = true) @PathVariable Long userId
+    ) {
+        List<Role> roles = roleService.getRolesByUserId(userId);
+        List<RoleResponse> responses = roles.stream()
+                .map(this::convertRoleToResponse)
+                .collect(Collectors.toList());
+        return ApiResponse.success(responses);
+    }
+
+    @Operation(
+            summary = "分配角色给用户",
+            description = "批量分配角色给指定用户",
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @RequirePermission("USER:UPDATE")
+    @PostMapping("/{userId}/roles")
+    public ApiResponse<Void> assignRolesToUser(
+            @Parameter(description = "用户ID", required = true) @PathVariable Long userId,
+            @RequestBody List<Long> roleIds
+    ) {
+        // 检查用户是否存在
+        User user = userService.getById(userId);
+        if (user == null) {
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        userRoleService.assignRolesToUser(userId, roleIds);
+
+        log.info("分配角色给用户成功：userId={}, roleIds={}", userId, roleIds);
+        return ApiResponse.success();
+    }
+
+    @Operation(
+            summary = "移除用户的单个角色",
+            description = "移除用户的指定角色",
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @RequirePermission("USER:UPDATE")
+    @DeleteMapping("/{userId}/role/{roleId}")
+    public ApiResponse<Void> removeUserRole(
+            @Parameter(description = "用户ID", required = true) @PathVariable Long userId,
+            @Parameter(description = "角色ID", required = true) @PathVariable Long roleId
+    ) {
+        userRoleService.removeUserRole(userId, roleId);
+        log.info("移除用户角色成功：userId={}, roleId={}", userId, roleId);
+        return ApiResponse.success();
+    }
+
+    @Operation(
+            summary = "移除用户的所有角色",
+            description = "移除用户的所有角色",
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @RequirePermission("USER:UPDATE")
+    @DeleteMapping("/{userId}/roles")
+    public ApiResponse<Void> removeAllUserRoles(
+            @Parameter(description = "用户ID", required = true) @PathVariable Long userId
+    ) {
+        userRoleService.removeAllUserRoles(userId);
+        log.info("移除用户所有角色成功：userId={}", userId);
+        return ApiResponse.success();
     }
 
     @Operation(
@@ -195,7 +275,7 @@ public class UserController {
         description = "删除指定用户（逻辑删除），仅管理员可操作",
         security = @SecurityRequirement(name = "Authorization")
     )
-    @PreAuthorize("hasRole('ADMIN')")
+    @RequirePermission("USER:DELETE")
     @DeleteMapping("/{id}")
     public ApiResponse<String> delete(
         @Parameter(description = "用户ID", required = true) @PathVariable Long id
@@ -266,6 +346,20 @@ public class UserController {
             .createAt(user.getCreateAt())
             .updateAt(user.getUpdateAt())
             .build();
+    }
+
+    /**
+     * 转换 Role 实体为 RoleResponse
+     */
+    private RoleResponse convertRoleToResponse(Role role) {
+        return RoleResponse.builder()
+                .id(role.getId())
+                .roleName(role.getRoleName())
+                .description(role.getDescription())
+                .status(role.getStatus())
+                .createAt(role.getCreateAt())
+                .updateAt(role.getUpdateAt())
+                .build();
     }
 }
 

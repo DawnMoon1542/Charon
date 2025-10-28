@@ -66,12 +66,26 @@ public class AuthController {
     }
 
     @Operation(
-        summary = "查询用户登录时间",
-        description = "获取指定用户的登录时间",
+            summary = "查询当前用户登录时间",
+            description = "获取当前登录用户的登录时间",
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @GetMapping("/login-time")
+    public ApiResponse<Long> getLoginTime(HttpServletRequest request) {
+        // 从Token中获取当前用户ID
+        String token = getTokenFromRequest(request);
+        Long userId = authService.getUserIdFromToken(token);
+        Long loginTime = authService.getLoginTime(userId);
+        return ApiResponse.success(loginTime);
+    }
+
+    @Operation(
+            summary = "查询指定用户登录时间",
+            description = "获取指定用户的登录时间（管理员使用）",
         security = @SecurityRequirement(name = "Authorization")
     )
     @GetMapping("/login-time/{userId}")
-    public ApiResponse<Long> getLoginTime(@PathVariable Long userId) {
+    public ApiResponse<Long> getLoginTimeByUserId(@PathVariable Long userId) {
         Long loginTime = authService.getLoginTime(userId);
         return ApiResponse.success(loginTime);
     }
