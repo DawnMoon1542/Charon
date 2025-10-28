@@ -93,6 +93,15 @@ springdoc:
     - group: 'Auth'
       paths-to-match: '/api/auth/**'
       packages-to-scan: com.dawnmoon.charon.controller
+    - group: 'Role'
+      paths-to-match: '/api/role/**'
+      packages-to-scan: com.dawnmoon.charon.controller
+    - group: 'Permission'
+      paths-to-match: '/api/permission/**'
+      packages-to-scan: com.dawnmoon.charon.controller
+    - group: 'RolePermission'
+      paths-to-match: '/api/role-permission/**'
+      packages-to-scan: com.dawnmoon.charon.controller
 
 # 应用自定义配置
 app:
