@@ -43,7 +43,8 @@ public class SecurityConfig {
         "/webjars/**",
         "/favicon.ico",
             "/error",
-            "/actuator/**"
+            "/actuator/**",
+            "/api/mq/**"
     };
 
     /**

@@ -69,7 +69,7 @@ mvn install
 #### 3️⃣ 配置敏感信息
 
 使用 `src/main/resources/secret.yaml.example` 文件创建 `src/main/resources/secret.yaml`
-文件，并在其中配置ECC公私密钥（可选）、MySQL或PostgreSQL的连接信息、Redis连接信息。
+文件，并在其中配置ECC公私密钥（可选）、MySQL或PostgreSQL的连接信息、Redis连接信息、RabbitMQ连接信息。
 
 #### 4️⃣ 编译程序
 
