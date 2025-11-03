@@ -120,7 +120,7 @@ public class AuthServiceImpl implements AuthService {
         // 2. 创建新用户
         User user = new User(
                 request.getUsername(),
-                request.getPassword(),
+                CryptoUtil.bcryptEncode(request.getPassword()),
                 request.getRealName(),
                 request.getPhone(),
                 request.getEmail(),
