@@ -61,6 +61,14 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
+		<!--		<dependency>-->
+		<!--			<groupId>org.springframework.boot</groupId>-->
+		<!--			<artifactId>spring-boot-starter-amqp</artifactId>-->
+		<!--		</dependency>-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
 
 		<!-- MyBatis-Plus -->
 		<dependency>
@@ -69,7 +77,7 @@
 			<version>${mybatis-plus.version}</version>
 		</dependency>
 
-		<!-- 添加了这个才会有PaginationInnerInterceptor，奇怪 -->
+		<!-- 添加了这个才会有PaginationInnerInterceptor -->
 		<dependency>
 			<groupId>com.baomidou</groupId>
 			<artifactId>mybatis-plus-jsqlparser</artifactId>
@@ -88,7 +96,7 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- SQL 日志增强（可在 application 中一键开/关 SQL/参数/耗时） -->
+		<!-- SQL 日志增强 -->
 		<dependency>
 			<groupId>com.github.gavlyukovskiy</groupId>
 			<artifactId>p6spy-spring-boot-starter</artifactId>
@@ -132,6 +140,7 @@
 			<version>${lombok.version}</version>
 			<scope>provided</scope>
 		</dependency>
+
 
 		<!-- 测试 -->
 		<dependency>

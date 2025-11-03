@@ -1,8 +1,8 @@
 package com.dawnmoon.charon.config;
 
 import com.dawnmoon.charon.common.security.JwtAuthenticationFilter;
-import com.dawnmoon.charon.common.security.RestAuthenticationEntryPoint;
 import com.dawnmoon.charon.common.security.RestAccessDeniedHandler;
+import com.dawnmoon.charon.common.security.RestAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,7 +42,8 @@ public class SecurityConfig {
         "/v3/api-docs/**",
         "/webjars/**",
         "/favicon.ico",
-        "/error"
+            "/error",
+            "/actuator/**"
     };
 
     /**

@@ -119,3 +119,17 @@ app:
 #      public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEiiJt7Ceq7WIGz/zt0bgtX5cKUW27OQUbEEwajP+OIUGzLYjY03V3JUXOHtLBzdV6FBJLnqWCxUxexzQSOnZevQ==
 #      private-key: MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg+kTY6aigTzGHKkTlSYGV898+orMPVVukK7VCYa1/xsugCgYIKoZIzj0DAQehRANCAASKIm3sJ6rtYgbP/O3RuC1flwpRbbs5BRsQTBqM/44hQbMtiNjTdXclRc4e0sHN1XoUEkuepYLFTF7HNBI6dl69
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+    access:
+      default: none
+  endpoint:
+    health:
+      access: unrestricted
+    metrics:
+      access: unrestricted
+    loggers:
+      access: unrestricted
