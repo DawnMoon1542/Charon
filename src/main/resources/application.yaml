@@ -53,14 +53,6 @@ logging:
 
 # 应用自定义配置
 app:
-  # 日志配置
-  log:
-    sql:
-      enabled: true
-      params: true
-      result: false
-
-  # 安全配置
   security:
     token:
       # Token 过期时间（秒）- 24小时
